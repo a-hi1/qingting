@@ -166,6 +166,13 @@ h1 em{font-style:normal;position:relative;white-space:nowrap;
 .qt small{display:block;font-size:9.5px;color:var(--ink-3);font-weight:500}
 .qd{font-family:ui-monospace,monospace;font-size:9.5px;color:var(--ink-3)}
 
+@keyframes artOut{to{opacity:0;transform:translateX(-14px) scale(.985)}}
+@keyframes artIn{from{opacity:0;transform:translateX(14px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes txtIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.art{will-change:transform,opacity}
+.now.anim{animation:txtIn .34s cubic-bezier(.2,.8,.3,1)}
+.qrow{animation:txtIn .3s ease}
+
 /* 悬浮小卡 */
 .float{position:absolute;background:#fff;border-radius:16px;padding:10px 14px;
   box-shadow:var(--sh-1);display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;
@@ -396,30 +403,28 @@ footer small{font-size:11px;color:var(--ink-3);line-height:2}
           <div class="device">
             <div class="screen">
               <div class="notch"></div>
-              <div class="art">
-                <div class="sun"></div>
+              <div class="art" id="phArt">
+                <div class="sun" id="phSun"></div>
                 <div class="hill"></div>
                 <div class="hill two"></div>
                 <div class="petal" style="left:22%;animation-delay:0s"></div>
                 <div class="petal" style="left:58%;animation-delay:2.4s"></div>
                 <div class="petal" style="left:80%;animation-delay:4.1s"></div>
               </div>
-              <div class="now">
-                <h4>春日慢行</h4>
-                <span>沈知夏 · 春日慢行</span>
+              <div class="now" id="phNow">
+                <h4 id="phTitle">春日慢行</h4>
+                <span id="phArtist">沈知夏 · 春日慢行</span>
               </div>
               <div class="wave" id="miniWave"></div>
-              <div class="dash"><b></b><i></i></div>
-              <div class="times"><span>1:42</span><span>3:58</span></div>
+              <div class="dash"><b id="phBar"></b><i id="phKnob"></i></div>
+              <div class="times"><span id="phCur">1:42</span><span id="phDur">3:58</span></div>
               <div class="ctrl">
-                <button aria-label="prev"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+                <button id="phPrev" aria-label="prev"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
                 <button class="play" id="miniPlay" aria-label="play"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                <button aria-label="next"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+                <button id="phNext" aria-label="next"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
               </div>
-              <div class="queue">
+              <div class="queue" id="phQueue">
                 <div class="qh">接下来</div>
-                <div class="qi"><span class="qa" style="background:linear-gradient(140deg,#8fd3ff,#5fe0c4)"></span><span class="qt">海边来信<small>周予</small></span><span class="qd">4:12</span></div>
-                <div class="qi"><span class="qa" style="background:linear-gradient(140deg,#ffc46b,#ff9ec7)"></span><span class="qt">灯下<small>江野</small></span><span class="qd">3:21</span></div>
               </div>
             </div>
           </div>
@@ -868,6 +873,96 @@ var LYRICS=[
     paint();
   });
   paint();
+})();
+
+/* ---------- 手机样机：曲目轮播 ---------- */
+var TRACKS=[
+  {t:'春日慢行',a:'沈知夏',dur:'3:58',cur:'1:42',pos:42,
+   bg:'linear-gradient(150deg,#ff9ec7,#c4a6ff 45%,#8fd3ff)',
+   sun:'radial-gradient(circle,#fff8dc,#ffd7a1 60%,transparent 72%)',
+   sunW:120,right:-18,top:24},
+  {t:'海边来信',a:'周予',dur:'4:12',cur:'0:58',pos:23,
+   bg:'linear-gradient(150deg,#8fd3ff,#5fe0c4 52%,#d8f7f0)',
+   sun:'radial-gradient(circle,#ffffff,#c7f1ff 58%,transparent 70%)',
+   sunW:104,left:-22,top:-14},
+  {t:'灯下',a:'江野',dur:'3:21',cur:'2:10',pos:65,
+   bg:'linear-gradient(150deg,#ffc46b,#ff9ec7 48%,#b48cd8)',
+   sun:'radial-gradient(circle,#fff3d6,#ffb86b 55%,transparent 72%)',
+   sunW:88,right:34,top:96},
+  {t:'雪落的声音',a:'白露',dur:'4:44',cur:'0:31',pos:12,
+   bg:'linear-gradient(150deg,#c9d6f7,#b7a4ff 50%,#e9f3ff)',
+   sun:'radial-gradient(circle,#ffffff,#dfe9ff 60%,transparent 72%)',
+   sunW:92,right:20,top:18}
+];
+
+(function(){
+  var art=document.getElementById('phArt'), sun=document.getElementById('phSun');
+  var title=document.getElementById('phTitle'), artist=document.getElementById('phArtist');
+  var cur=document.getElementById('phCur'), dur=document.getElementById('phDur');
+  var bar=document.getElementById('phBar'), knob=document.getElementById('phKnob');
+  var now=document.getElementById('phNow'), queue=document.getElementById('phQueue');
+  var idx=0, busy=false;
+
+  function paint(i){
+    var k=TRACKS[i];
+    art.style.background=k.bg;
+    sun.style.background=k.sun;
+    sun.style.width=k.sunW+'px'; sun.style.height=k.sunW+'px';
+    sun.style.top=k.top+'px';
+    if(k.left!==undefined){ sun.style.left=k.left+'px'; sun.style.right='auto'; }
+    else { sun.style.right=k.right+'px'; sun.style.left='auto'; }
+    title.textContent=k.t;
+    artist.textContent=k.a+' · 春日慢行';
+    cur.textContent=k.cur; dur.textContent=k.dur;
+    bar.style.width=k.pos+'%'; knob.style.left=k.pos+'%';
+  }
+
+  function renderQueue(i){
+    var rows=queue.querySelectorAll('.qrow');
+    for(var r=0;r<rows.length;r++) rows[r].parentNode.removeChild(rows[r]);
+    for(var n=1;n<=2;n++){
+      var k=TRACKS[(i+n)%TRACKS.length];
+      var d=document.createElement('div');
+      d.className='qi qrow';
+      d.innerHTML='<span class="qa" style="background:'+k.bg+'"></span>'+
+                  '<span class="qt">'+k.t+'<small>'+k.a+'</small></span>'+
+                  '<span class="qd">'+k.dur+'</span>';
+      queue.appendChild(d);
+    }
+  }
+
+  function go(dir){
+    if(busy) return;
+    busy=true;
+    idx=(idx+dir+TRACKS.length)%TRACKS.length;
+    art.style.animation='artOut .22s ease forwards';
+    setTimeout(function(){
+      paint(idx);
+      renderQueue(idx);
+      art.style.animation='artIn .38s cubic-bezier(.2,.8,.3,1) forwards';
+      now.classList.remove('anim'); void now.offsetWidth; now.classList.add('anim');
+      setTimeout(function(){ busy=false; },220);
+    },210);
+  }
+
+  document.getElementById('phNext').addEventListener('click',function(){ go(1); });
+  document.getElementById('phPrev').addEventListener('click',function(){ go(-1); });
+
+  // 触摸滑动
+  var sx=0, sy=0, tracking=false;
+  art.addEventListener('touchstart',function(e){
+    sx=e.touches[0].clientX; sy=e.touches[0].clientY; tracking=true;
+  },{passive:true});
+  art.addEventListener('touchend',function(e){
+    if(!tracking) return; tracking=false;
+    var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>34 && Math.abs(dx)>Math.abs(dy)) go(dx<0?1:-1);
+  },{passive:true});
+
+  // 点封面也能切
+  art.addEventListener('click',function(){ go(1); });
+
+  paint(0); renderQueue(0);
 })();
 
 /* ---------- 音量滑块 ---------- */
