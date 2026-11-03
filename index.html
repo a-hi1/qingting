@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff8fbd'/><stop offset='1' stop-color='%23a98bff'/></linearGradient></defs><rect width='40' height='40' rx='13' fill='url(%23g)'/><path d='M20 7.4c6.4 4 8.7 10.6 6.3 16.3C24.5 27.9 21.7 29.8 20 29.8s-4.5-1.9-6.3-6.1C11.3 18 13.6 11.4 20 7.4Z' fill='%23fff'/><g stroke='%23ff6fae' stroke-width='2.1' stroke-linecap='round'><path d='M16.7 17.4v5.2'/><path d='M20 15.2v9.6'/><path d='M23.3 18.3v3.4'/></g></svg>" />
 <title>音ノ葉 OTONOHA · 把喜欢的歌，放进四季里</title>
 <meta name="description" content="音ノ葉 是一款二次元风格的轻量音乐播放器：逐字歌词、四季主题、离线优先。零广告。" />
 <style>
@@ -54,9 +55,12 @@ main,header,footer{position:relative;z-index:1}
 }
 .nav.solid{background:rgba(255,255,255,.92);box-shadow:0 14px 40px -16px rgba(126,90,140,.45)}
 .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;letter-spacing:.01em;white-space:nowrap}
-.mark{width:26px;height:26px;border-radius:9px;background:linear-gradient(135deg,var(--pink),var(--lilac));
-  display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;box-shadow:0 4px 12px -4px var(--pink)}
-.brand small{display:block;font-size:9px;letter-spacing:.22em;color:var(--ink-3);font-weight:600;margin-top:-4px}
+.logo-mark{width:28px;height:28px;flex:none;filter:drop-shadow(0 5px 10px rgba(255,126,179,.42));
+  transition:transform .5s cubic-bezier(.2,.8,.3,1)}
+.brand:hover .logo-mark{transform:rotate(-8deg) scale(1.06)}
+.brand .wm{font-family:var(--mincho);font-size:15.5px;letter-spacing:.06em;font-weight:700;line-height:1}
+.brand small{display:block;font-family:ui-monospace,monospace;font-size:8px;letter-spacing:.26em;
+  color:var(--ink-3);font-weight:600;margin-top:5px;line-height:1}
 .links{display:flex;gap:2px;margin-left:18px}
 .links a{
   font-size:13px;color:var(--ink-2);padding:8px 14px;border-radius:999px;
@@ -337,8 +341,23 @@ footer small{font-size:11px;color:var(--ink-3);line-height:2}
 
 <header class="nav" id="nav">
   <div class="brand">
-    <span class="mark">音</span>
-    <span>音ノ葉<small>OTONOHA</small></span>
+    <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true">
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ff8fbd"/><stop offset="1" stop-color="#a98bff"/>
+        </linearGradient>
+        <radialGradient id="lh" cx=".26" cy=".1" r=".92">
+          <stop offset="0" stop-color="#fff" stop-opacity=".4"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="40" height="40" rx="13" fill="url(#lg)"/>
+      <rect width="40" height="40" rx="13" fill="url(#lh)"/>
+      <path d="M20 7.4c6.4 4 8.7 10.6 6.3 16.3C24.5 27.9 21.7 29.8 20 29.8s-4.5-1.9-6.3-6.1C11.3 18 13.6 11.4 20 7.4Z" fill="#fff"/>
+      <g stroke="#ff6fae" stroke-width="2.1" stroke-linecap="round">
+        <path d="M16.7 17.4v5.2"/><path d="M20 15.2v9.6"/><path d="M23.3 18.3v3.4"/>
+      </g>
+    </svg>
+    <span class="wm">音ノ葉<small>OTONOHA</small></span>
   </div>
   <nav class="links" id="links">
     <a href="#top" class="on">首页</a>
@@ -643,6 +662,13 @@ footer small{font-size:11px;color:var(--ink-3);line-height:2}
     <div class="fnav">
       <a href="#top">首页</a><a href="#feat">特性</a><a href="#demo">体验</a>
       <a href="#comp">组件</a><a href="#data">数据</a>
+    </div>
+    <div style="display:flex;justify-content:center;margin-bottom:16px">
+      <svg viewBox="0 0 40 40" style="width:34px;height:34px;opacity:.9">
+        <rect width="40" height="40" rx="13" fill="#f3e7f0"/>
+        <path d="M20 7.4c6.4 4 8.7 10.6 6.3 16.3C24.5 27.9 21.7 29.8 20 29.8s-4.5-1.9-6.3-6.1C11.3 18 13.6 11.4 20 7.4Z" fill="#e7a9c6"/>
+        <g stroke="#fdf5f9" stroke-width="2.1" stroke-linecap="round"><path d="M16.7 17.4v5.2"/><path d="M20 15.2v9.6"/><path d="M23.3 18.3v3.4"/></g>
+      </svg>
     </div>
     <small>
       音ノ葉 / OTONOHA — 一个虚构的音乐播放器产品概念<br>
